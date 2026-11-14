@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EnvíosSolidarios · Rastrea tu ayuda humanitaria</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{ margin:0; padding:0; box-sizing:border-box; }
+  :root{
+    --primary:#0ea5a5; --primary-dark:#0b7a7a; --primary-light:#5eead4;
+    --accent:#fb923c; --accent-dark:#f97316; --pink:#f472b6; --violet:#8b5cf6;
+    --emerald:#10b981; --dark:#0f172a; --dark-2:#1e293b; --gray:#64748b;
+    --light:#f8fafc; --white:#fff;
+    --grad-hero:linear-gradient(135deg,#0ea5a5 0%,#0b7a7a 45%,#0f172a 100%);
+    --grad-accent:linear-gradient(135deg,#fb923c,#f472b6);
+    --grad-teal:linear-gradient(135deg,#0ea5a5,#5eead4);
+    --shadow-md:0 10px 30px -10px rgba(15,23,42,.15);
+    --shadow-lg:0 25px 60px -15px rgba(15,23,42,.25);
+    --shadow-glow:0 20px 50px -12px rgba(14,165,165,.5);
+    --radius:20px;
+  }
+  html{ scroll-behavior:smooth; }
+  body{ font-family:'Plus Jakarta Sans',system-ui,sans-serif; color:var(--dark); background:var(--light); line-height:1.6; overflow-x:hidden; -webkit-font-smoothing:antialiased; }
+  h1,h2,h3,h4,.logo{ font-family:'Space Grotesk','Plus Jakarta Sans',sans-serif; letter-spacing:-.02em; }
+  a{ color:inherit; } img{ max-width:100%; display:block; } button{ font-family:inherit; }
+  body::before{ content:''; position:fixed; inset:0; z-index:-2; pointer-events:none;
+    background:radial-gradient(800px circle at 5% 5%,rgba(14,165,165,.10),transparent 40%),
+    radial-gradient(700px circle at 95% 15%,rgba(251,146,60,.10),transparent 45%),
+    radial-gradient(800px circle at 50% 95%,rgba(139,92,246,.08),transparent 50%); }
+
+  /* HEADER */
+  header{ position:sticky; top:0; z-index:1000; background:rgba(255,255,255,.72); backdrop-filter:blur(20px) saturate(180%); -webkit-backdrop-filter:blur(20px) saturate(180%); border-bottom:1px solid rgba(15,23,42,.06); }
+  nav{ max-width:1280px; margin:0 auto; display:flex; justify-content:space-between; align-items:center; padding:1rem 2rem; }
+  .logo{ display:flex; align-items:center; gap:.7rem; font-size:1.35rem; font-weight:700; color:var(--dark); text-decoration:none; }
+  .logo-icon{ width:44px; height:44px; border-radius:14px; background:var(--grad-teal); display:grid; place-items:center; color:#fff; box-shadow:var(--shadow-glow); transform:rotate(-4deg); transition:transform .4s; }
+  .logo-icon svg{ width:22px; height:22px; }
+  .logo:hover .logo-icon{ transform:rotate(4deg) scale(1.08); }
+  .nav-links{ display:flex; gap:2rem; list-style:none; align-items:center; }
+  .nav-links a:not(.btn){ text-decoration:none; color:var(--dark-2); font-weight:600; font-size:.95rem; position:relative; padding:.3rem 0; transition:color .25s; }
+  .nav-links a:not(.btn)::after{ content:''; position:absolute; left:0; bottom:0; width:0; height:2px; background:var(--grad-teal); transition:width .3s; border-radius:2px; }
+  .nav-links a:not(.btn):hover{ color:var(--primary); }
+  .nav-links a:not(.btn):hover::after{ width:100%; }
+  .btn{ display:inline-flex; align-items:center; justify-content:center; gap:.5rem; padding:.9rem 1.9rem; border-radius:50px; text-decoration:none; font-weight:700; font-size:.95rem; border:none; cursor:pointer; transition:all .3s; position:relative; overflow:hidden; }
+  .btn svg{ width:18px; height:18px; flex-shrink:0; }
+  .btn-primary{ background:var(--grad-teal); color:#fff; box-shadow:0 10px 25px -8px rgba(14,165,165,.6); }
+  .btn-primary:hover{ transform:translateY(-3px); box-shadow:0 20px 40px -10px rgba(14,165,165,.75); }
+  .btn-accent{ background:var(--grad-accent); color:#fff; box-shadow:0 10px 25px -8px rgba(251,146,60,.6); }
+  .btn-accent:hover{ transform:translateY(-3px); box-shadow:0 20px 40px -10px rgba(251,146,60,.8); }
+  .btn-ghost{ background:rgba(255,255,255,.15); color:#fff; border:1.5px solid rgba(255,255,255,.4); backdrop-filter:blur(10px); }
+  .btn-ghost:hover{ background:rgba(255,255,255,.28); transform:translateY(-3px); }
+  .btn-sm{ padding:.55rem 1.2rem; font-size:.85rem; }
+  .btn-danger{ background:#ef4444; color:#fff; }
+  .btn-danger:hover{ background:#dc2626; transform:translateY(-2px); }
+  .btn-outline{ background:transparent; color:var(--primary); border:1.5px solid var(--primary); }
+  .btn-outline:hover{ background:var(--primary); color:#fff; transform:translateY(-2px); }
+  .menu-toggle{ display:none; background:none; border:none; font-size:1.8rem; cursor:pointer; color:var(--dark); width:44px; height:44px; border-radius:12px; }
+
+  /* HERO */
+  .hero{ position:relative; background:var(--grad-hero); color:#fff; padding:7rem 2rem 8rem; overflow:hidden; isolation:isolate; }
+  .hero-blob{ position:absolute; border-radius:50%; filter:blur(80px); opacity:.6; z-index:-1; animation:floatBlob 20s ease-in-out infinite; }
+  .hero-blob-1{ width:500px; height:500px; background:radial-gradient(circle,rgba(94,234,212,.5),transparent 70%); top:-150px; left:-150px; }
+  .hero-blob-2{ width:600px; height:600px; background:radial-gradient(circle,rgba(251,146,60,.4),transparent 70%); bottom:-200px; right:-150px; animation-delay:-7s; }
+  .hero-blob-3{ width:400px; height:400px; background:radial-gradient(circle,rgba(139,92,246,.35),transparent 70%); top:40%; left:50%; transform:translateX(-50%); animation-delay:-14s; }
+  @keyframes floatBlob{ 0%,100%{ transform:translate(0,0) scale(1); } 33%{ transform:translate(40px,-30px) scale(1.1); } 66%{ transform:translate(-30px,40px) scale(.95); } }
+  .hero-grid{ position:absolute; inset:0; z-index:-1; background-image:linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px); background-size:60px 60px; mask-image:radial-gradient(ellipse at center,black 30%,transparent 75%); -webkit-mask-image:radial-gradient(ellipse at center,black 30%,transparent 75%); }
+  .hero-content{ max-width:900px; margin:0 auto; text-align:center; position:relative; z-index:2; }
+  .hero-badge{ display:inline-flex; align-items:center; gap:.6rem; background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.25); padding:.55rem 1.2rem; border-radius:50px; font-size:.85rem; font-weight:600; margin-bottom:2rem; backdrop-filter:blur(10px); }
+  .hero-badge .dot{ width:8px; height:8px; border-radius:50%; background:#5eead4; box-shadow:0 0 0 4px rgba(94,234,212,.3); animation:pulseDot 2s infinite; }
+  @keyframes pulseDot{ 0%,100%{ box-shadow:0 0 0 4px rgba(94,234,212,.3); } 50%{ box-shadow:0 0 0 8px rgba(94,234,212,.1); } }
+  .hero h1{ font-size:clamp(2.3rem,5.5vw,4.2rem); line-height:1.08; margin-bottom:1.5rem; font-weight:700; }
+  .hero h1 span{ background:linear-gradient(135deg,#5eead4,#fb923c,#f472b6); background-size:200% 200%; -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; display:inline-block; animation:gradientShift 4s ease infinite; }
+  @keyframes gradientShift{ 0%,100%{ background-position:0% 50%; } 50%{ background-position:100% 50%; } }
+  .hero p{ font-size:1.2rem; margin-bottom:2.5rem; opacity:.92; max-width:650px; margin-left:auto; margin-right:auto; }
+  .hero-buttons{ display:flex; gap:1rem; justify-content:center; flex-wrap:wrap; }
+  .hero-metrics{ display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:1.5rem; max-width:800px; margin:4rem auto 0; }
+  .hero-metric{ background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.15); padding:1.3rem 1rem; border-radius:18px; backdrop-filter:blur(12px); transition:all .35s; }
+  .hero-metric:hover{ transform:translateY(-6px); background:rgba(255,255,255,.15); }
+  .hero-metric strong{ display:block; font-size:1.9rem; font-family:'Space Grotesk',sans-serif; background:linear-gradient(135deg,#5eead4,#fb923c); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; margin-bottom:.2rem; }
+  .hero-metric span{ font-size:.85rem; opacity:.85; }
+
+  /* SECTIONS */
+  section{ padding:6rem 2rem; position:relative; }
+  .container{ max-width:1280px; margin:0 auto; position:relative; }
+  .section-title{ text-align:center; font-size:clamp(1.9rem,4.5vw,2.8rem); margin-bottom:1rem; font-weight:700; line-height:1.15; }
+  .section-subtitle{ text-align:center; color:var(--gray); margin-bottom:3.5rem; font-size:1.1rem; max-width:620px; margin-left:auto; margin-right:auto; }
+  .section-eyebrow{ display:block; text-align:center; color:var(--primary); font-weight:700; font-size:.85rem; text-transform:uppercase; letter-spacing:.1em; margin-bottom:.8rem; }
+
+  /* RASTREO */
+  .rastreo-box{ max-width:680px; margin:0 auto; background:#fff; border-radius:var(--radius); box-shadow:var(--shadow-lg); padding:2.5rem; border:1px solid rgba(15,23,42,.06); }
+  .rastreo-tabs{ display:flex; gap:.5rem; margin-bottom:1.8rem; background:var(--light); padding:.4rem; border-radius:14px; }
+  .rastreo-tab{ flex:1; padding:.8rem 1rem; border:none; background:none; border-radius:10px; font-weight:600; font-size:.95rem; color:var(--gray); cursor:pointer; transition:all .25s; }
+  .rastreo-tab.active{ background:#fff; color:var(--primary); box-shadow:0 4px 12px -4px rgba(0,0,0,.1); }
+  .rastreo-form{ display:flex; gap:.8rem; }
+  .rastreo-form input{ flex:1; padding:1rem 1.3rem; border:2px solid #e2e8f0; border-radius:14px; font-size:1rem; font-family:inherit; transition:border-color .25s; }
+  .rastreo-form input:focus{ outline:none; border-color:var(--primary); }
+  .rastreo-result{ margin-top:2rem; }
+  .envio-card{ background:var(--light); border-radius:16px; padding:1.8rem; margin-bottom:1.2rem; border:1px solid #e2e8f0; }
+  .envio-card-header{ display:flex; justify-content:space-between; align-items:start; flex-wrap:wrap; gap:1rem; margin-bottom:1.2rem; }
+  .envio-codigo{ font-family:'Space Grotesk',sans-serif; font-size:1.3rem; font-weight:700; color:var(--dark); }
+  .estado-badge{ display:inline-flex; align-items:center; gap:.4rem; padding:.4rem .9rem; border-radius:50px; font-size:.8rem; font-weight:700; text-transform:uppercase; letter-spacing:.05em; }
+  .estado-pendiente{ background:#fef3c7; color:#92400e; }
+  .estado-en_transito{ background:#dbeafe; color:#1e40af; }
+  .estado-pausado{ background:#fce7f3; color:#9d174d; }
+  .estado-entregado{ background:#d1fae5; color:#065f46; }
+  .estado-error{ background:#fee2e2; color:#991b1b; }
+  .envio-info{ display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:1rem; margin-bottom:1.5rem; }
+  .envio-info-item label{ display:block; font-size:.78rem; color:var(--gray); font-weight:600; text-transform:uppercase; letter-spacing:.05em; margin-bottom:.2rem; }
+  .envio-info-item span{ font-size:.95rem; color:var(--dark-2); font-weight:500; }
+
+  /* TIMELINE */
+  .timeline{ position:relative; padding-left:2rem; }
+  .timeline::before{ content:''; position:absolute; left:.5rem; top:.5rem; bottom:.5rem; width:2px; background:linear-gradient(to bottom,var(--primary-light),var(--primary)); border-radius:2px; }
+  .timeline-item{ position:relative; padding-bottom:1.5rem; }
+  .timeline-item:last-child{ padding-bottom:0; }
+  .timeline-dot{ position:absolute; left:-1.7rem; top:.2rem; width:14px; height:14px; border-radius:50%; background:var(--primary); border:3px solid #fff; box-shadow:0 0 0 2px var(--primary); }
+  .timeline-item:first-child .timeline-dot{ background:var(--accent); box-shadow:0 0 0 2px var(--accent); }
+  .timeline-content{ background:#fff; border-radius:12px; padding:1rem 1.3rem; border:1px solid #e2e8f0; }
+  .timeline-content h4{ font-size:.95rem; font-weight:700; margin-bottom:.3rem; }
+  .timeline-content p{ font-size:.85rem; color:var(--gray); }
+  .timeline-content .timeline-fecha{ font-size:.75rem; color:#94a3b8; margin-top:.4rem; }
+
+  /* FEATURES */
+  .features-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:2rem; }
+  .feature-card{ background:#fff; border-radius:var(--radius); padding:2.2rem; box-shadow:var(--shadow-md); border:1px solid rgba(15,23,42,.05); transition:all .35s; }
+  .feature-card:hover{ transform:translateY(-8px); box-shadow:var(--shadow-lg); }
+  .feature-icon{ width:56px; height:56px; border-radius:16px; display:grid; place-items:center; margin-bottom:1.3rem; }
+  .feature-icon svg{ width:28px; height:28px; }
+  .fi-teal{ background:rgba(14,165,165,.12); color:var(--primary); }
+  .fi-orange{ background:rgba(251,146,60,.12); color:var(--accent-dark); }
+  .fi-pink{ background:rgba(244,114,182,.12); color:var(--pink); }
+  .fi-violet{ background:rgba(139,92,246,.12); color:var(--violet); }
+  .feature-card h3{ font-size:1.25rem; margin-bottom:.6rem; }
+  .feature-card p{ color:var(--gray); font-size:.95rem; }
+
+  /* STEPS */
+  .steps-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:2rem; }
+  .step-card{ text-align:center; }
+  .step-number{ width:64px; height:64px; border-radius:50%; background:var(--grad-teal); color:#fff; display:grid; place-items:center; font-family:'Space Grotesk',sans-serif; font-size:1.5rem; font-weight:700; margin:0 auto 1.2rem; box-shadow:var(--shadow-glow); }
+  .step-card h3{ font-size:1.15rem; margin-bottom:.5rem; }
+  .step-card p{ color:var(--gray); font-size:.9rem; }
+
+  /* ADMIN */
+  .admin-section{ display:none; }
+  .admin-section.active{ display:block; }
+  .admin-login-box{ max-width:420px; margin:0 auto; background:#fff; border-radius:var(--radius); box-shadow:var(--shadow-lg); padding:2.5rem; border:1px solid rgba(15,23,42,.06); }
+  .admin-login-box h3{ text-align:center; margin-bottom:.5rem; font-size:1.5rem; }
+  .admin-login-box p{ text-align:center; color:var(--gray); margin-bottom:1.8rem; font-size:.9rem; }
+  .admin-login-box input{ width:100%; padding:1rem 1.3rem; border:2px solid #e2e8f0; border-radius:14px; font-size:1rem; font-family:inherit; margin-bottom:1rem; transition:border-color .25s; }
+  .admin-login-box input:focus{ outline:none; border-color:var(--primary); }
+  .admin-login-box .btn{ width:100%; }
+  .admin-login-error{ color:#ef4444; font-size:.85rem; text-align:center; margin-top:.8rem; display:none; }
+
+  .admin-header{ display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; margin-bottom:2rem; }
+  .admin-header h2{ font-size:1.8rem; }
+  .admin-actions{ display:flex; gap:.6rem; flex-wrap:wrap; }
+
+  .admin-table-wrap{ background:#fff; border-radius:var(--radius); box-shadow:var(--shadow-md); overflow:hidden; border:1px solid rgba(15,23,42,.06); overflow-x:auto; }
+  table{ width:100%; border-collapse:collapse; }
+  thead{ background:var(--light); }
+  th{ text-align:left; padding:1rem 1.3rem; font-size:.78rem; font-weight:700; color:var(--gray); text-transform:uppercase; letter-spacing:.05em; border-bottom:1px solid #e2e8f0; }
+  td{ padding:1rem 1.3rem; font-size:.9rem; border-bottom:1px solid #f1f5f9; }
+  tbody tr:hover{ background:var(--light); }
+  tbody tr:last-child td{ border-bottom:none; }
+  .table-actions{ display:flex; gap:.4rem; }
+  .table-actions button{ padding:.4rem .7rem; border:none; border-radius:8px; font-size:.78rem; font-weight:600; cursor:pointer; transition:all .2s; }
+  .btn-edit{ background:#dbeafe; color:#1e40af; }
+  .btn-edit:hover{ background:#bfdbfe; }
+  .btn-del{ background:#fee2e2; color:#991b1b; }
+  .btn-del:hover{ background:#fecaca; }
+  .btn-event{ background:#fef3c7; color:#92400e; }
+  .btn-event:hover{ background:#fde68a; }
+
+  /* MODAL */
+  .modal-overlay{ position:fixed; inset:0; background:rgba(15,23,42,.5); backdrop-filter:blur(6px); z-index:2000; display:none; place-items:center; padding:2rem; }
+  .modal-overlay.active{ display:grid; }
+  .modal{ background:#fff; border-radius:var(--radius); max-width:560px; width:100%; max-height:85vh; overflow-y:auto; box-shadow:var(--shadow-lg); }
+  .modal-header{ padding:1.5rem 2rem; border-bottom:1px solid #e2e8f0; display:flex; justify-content:space-between; align-items:center; }
+  .modal-header h3{ font-size:1.3rem; }
+  .modal-close{ background:none; border:none; font-size:1.5rem; cursor:pointer; color:var(--gray); width:36px; height:36px; border-radius:10px; display:grid; place-items:center; }
+  .modal-close:hover{ background:var(--light); }
+  .modal-body{ padding:2rem; }
+  .form-group{ margin-bottom:1.2rem; }
+  .form-group label{ display:block; font-size:.85rem; font-weight:600; color:var(--dark-2); margin-bottom:.4rem; }
+  .form-group input, .form-group select, .form-group textarea{ width:100%; padding:.8rem 1rem; border:2px solid #e2e8f0; border-radius:12px; font-size:.95rem; font-family:inherit; transition:border-color .25s; }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus{ outline:none; border-color:var(--primary); }
+  .form-group textarea{ resize:vertical; min-height:80px; }
+  .form-row{ display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+  .modal-footer{ padding:1.2rem 2rem; border-top:1px solid #e2e8f0; display:flex; gap:.8rem; justify-content:flex-end; }
+
+  /* EVENT BUTTONS */
+  .event-buttons{ display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:.6rem; margin-top:1.5rem; }
+  .event-btn{ padding:.8rem; border:none; border-radius:12px; font-weight:600; font-size:.85rem; cursor:pointer; transition:all .25s; display:flex; align-items:center; justify-content:center; gap:.4rem; }
+  .event-btn:hover{ transform:translateY(-2px); }
+  .ev-adelantar{ background:#dbeafe; color:#1e40af; }
+  .ev-pausar{ background:#fce7f3; color:#9d174d; }
+  .ev-reanudar{ background:#d1fae5; color:#065f46; }
+  .ev-error{ background:#fee2e2; color:#991b1b; }
+  .ev-entregar{ background:#fef3c7; color:#92400e; }
+
+  /* FOOTER */
+  footer{ background:var(--dark); color:#94a3b8; padding:3rem 2rem 2rem; }
+  .footer-content{ max-width:1280px; margin:0 auto; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1.5rem; }
+  .footer-content .logo{ color:#fff; }
+  .footer-content p{ font-size:.85rem; }
+
+  /* TOAST */
+  .toast{ position:fixed; bottom:2rem; right:2rem; background:var(--dark); color:#fff; padding:1rem 1.5rem; border-radius:14px; box-shadow:var(--shadow-lg); font-size:.9rem; font-weight:600; z-index:3000; transform:translateY(120%); transition:transform .35s cubic-bezier(.4,0,.2,1); }
+  .toast.show{ transform:translateY(0); }
+  .toast.success{ background:var(--emerald); }
+  .toast.error{ background:#ef4444; }
+
+  /* RESPONSIVE */
+  @media(max-width:768px){
+    .nav-links{ display:none; }
+    .menu-toggle{ display:block; }
+    .nav-links.open{ display:flex; position:absolute; top:100%; left:0; right:0; flex-direction:column; background:#fff; padding:1.5rem 2rem; gap:1rem; box-shadow:var(--shadow-md); border-bottom:1px solid #e2e8f0; }
+    .hero{ padding:5rem 1.5rem 6rem; }
+    section{ padding:4rem 1.5rem; }
+    .rastreo-box{ padding:1.5rem; }
+    .form-row{ grid-template-columns:1fr; }
+    .modal-body{ padding:1.5rem; }
+    .rastreo-form{ flex-direction:column; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <nav>
+    <a href="#" class="logo">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+      </div>
+      EnvíosSolidarios
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#rastrear">Rastrear</a></li>
+      <li><a href="#como-funciona">Cómo funciona</a></li>
+      <li><a href="#features">Beneficios</a></li>
+      <li><a href="#" onclick="showAdmin();return false;" class="btn btn-primary btn-sm">Admin</a></li>
+    </ul>
+    <button class="menu-toggle" onclick="document.getElementById('navLinks').classList.toggle('open')">☰</button>
+  </nav>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-blob hero-blob-1"></div>
+  <div class="hero-blob hero-blob-2"></div>
+  <div class="hero-blob hero-blob-3"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="hero-badge"><span class="dot"></span> Sistema de rastreo en tiempo real</div>
+    <h1>Rastrea tu <span>ayuda humanitaria</span> en cada paso del camino</h1>
+    <p>EnvíosSolidarios conecta donantes, voluntarios y beneficiarios con transparencia total. Cada envío tiene un código único para seguir su recorrido.</p>
+    <div class="hero-buttons">
+      <a href="#rastrear" class="btn btn-primary">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        Rastrear mi envío
+      </a>
+      <a href="#como-funciona" class="btn btn-ghost">Cómo funciona</a>
+    </div>
+    <div class="hero-metrics">
+      <div class="hero-metric"><strong id="metricTotal">0</strong><span>Envíos totales</span></div>
+      <div class="hero-metric"><strong id="metricTransito">0</strong><span>En tránsito</span></div>
+      <div class="hero-metric"><strong id="metricEntregados">0</strong><span>Entregados</span></div>
+      <div class="hero-metric"><strong>24/7</strong><span>Disponible</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- RASTREO -->
+<section id="rastrear">
+  <div class="container">
+    <span class="section-eyebrow">Consulta pública</span>
+    <h2 class="section-title">Rastrea tu envío</h2>
+    <p class="section-subtitle">Ingresa tu teléfono o el código de rastreo que te proporcionamos para ver el estado de tu ayuda humanitaria.</p>
+    <div class="rastreo-box">
+      <div class="rastreo-tabs">
+        <button class="rastreo-tab active" onclick="switchTab('telefono')">Buscar por teléfono</button>
+        <button class="rastreo-tab" onclick="switchTab('codigo')">Buscar por código</button>
+      </div>
+      <div class="rastreo-form">
+        <input type="text" id="rastreoInput" placeholder="Ej: +57 300 123 4567" onkeydown="if(event.key==='Enter')rastrear()">
+        <button class="btn btn-primary" onclick="rastrear()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          Buscar
+        </button>
+      </div>
+      <div class="rastreo-result" id="rastreoResult"></div>
+    </div>
+  </div>
+</section>
+
+<!-- CÓMO FUNCIONA -->
+<section id="como-funciona" style="background:var(--light);">
+  <div class="container">
+    <span class="section-eyebrow">Paso a paso</span>
+    <h2 class="section-title">Cómo funciona</h2>
+    <p class="section-subtitle">Un proceso simple y transparente para que la ayuda llegue a quien la necesita.</p>
+    <div class="steps-grid">
+      <div class="step-card"><div class="step-number">1</div><h3>Registro del envío</h3><p>El administrador registra el envío con los datos del beneficiario y genera un código único de rastreo.</p></div>
+      <div class="step-card"><div class="step-number">2</div><h3>Seguimiento continuo</h3><p>Cada paso del recorrido se actualiza: salida, tránsito, pausas y novedades, visibles en tiempo real.</p></div>
+      <div class="step-card"><div class="step-number">3</div><h3>Consulta pública</h3><p>El beneficiario consulta su envío con su teléfono o código, desde cualquier lugar del mundo.</p></div>
+      <div class="step-card"><div class="step-number">4</div><h3>Entrega confirmada</h3><p>Al llegar a destino, el envío se marca como entregado y la ayuda llega a quien la necesita.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="container">
+    <span class="section-eyebrow">Por qué elegirnos</span>
+    <h2 class="section-title">Transparencia en cada envío</h2>
+    <p class="section-subtitle">Tecnología al servicio de la ayuda humanitaria, con total visibilidad para todos.</p>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon fi-teal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
+        <h3>Código único de rastreo</h3><p>Cada envío recibe un código exclusivo que permite seguir su estado en tiempo real desde cualquier dispositivo.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon fi-orange"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
+        <h3>Actualizaciones en vivo</h3><p>El administrador puede adelantar, pausar, reanudar o reportar errores, y los cambios se reflejan al instante.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon fi-pink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+        <h3>Acceso universal</h3><p>Cualquier persona en el mundo puede consultar el estado de su envío con solo su teléfono o código.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon fi-violet"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <h3>Panel seguro</h3><p>El panel de administración está protegido con contraseña validada en el servidor, no en el navegador.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ADMIN LOGIN -->
+<section id="adminLogin" class="admin-section">
+  <div class="container">
+    <div class="admin-login-box">
+      <h3>Panel de administración</h3>
+      <p>Ingresa tu contraseña para gestionar los envíos</p>
+      <input type="password" id="adminPassword" placeholder="Contraseña" onkeydown="if(event.key==='Enter')adminLogin()">
+      <button class="btn btn-primary" onclick="adminLogin()">Ingresar</button>
+      <div class="admin-login-error" id="loginError">Contraseña incorrecta. Intenta de nuevo.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ADMIN DASHBOARD -->
+<section id="adminPanel" class="admin-section" style="background:var(--light);">
+  <div class="container">
+    <div class="admin-header">
+      <h2>Gestión de envíos</h2>
+      <div class="admin-actions">
+        <button class="btn btn-primary btn-sm" onclick="openCreateModal()">+ Nuevo envío</button>
+        <button class="btn btn-outline btn-sm" onclick="adminLogout()">Cerrar sesión</button>
+      </div>
+    </div>
+    <div class="admin-table-wrap">
+      <table>
+        <thead><tr><th>Código</th><th>Beneficiario</th><th>Teléfono</th><th>Origen</th><th>Destino</th><th>Estado</th><th>Acciones</th></tr></thead>
+        <tbody id="adminTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-content">
+    <a href="#" class="logo">
+      <div class="logo-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
+      EnvíosSolidarios
+    </a>
+    <p>© 2026 EnvíosSolidarios · Ayuda humanitaria con transparencia</p>
+  </div>
+</footer>
+
+<!-- MODAL: Crear/Editar envío -->
+<div class="modal-overlay" id="envioModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="modalTitle">Nuevo envío</h3>
+      <button class="modal-close" onclick="closeModal('envioModal')">×</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="envioId">
+      <div class="form-group"><label>Beneficiario *</label><input type="text" id="fBeneficiario" placeholder="Nombre del beneficiario"></div>
+      <div class="form-row">
+        <div class="form-group"><label>Teléfono *</label><input type="text" id="fTelefono" placeholder="+57 300 123 4567"></div>
+        <div class="form-group"><label>Estado</label>
+          <select id="fEstado"><option value="pendiente">Pendiente</option><option value="en_transito">En tránsito</option><option value="pausado">Pausado</option><option value="entregado">Entregado</option><option value="error">Error</option></select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Origen</label><input type="text" id="fOrigen" placeholder="Ciudad de origen"></div>
+        <div class="form-group"><label>Destino</label><input type="text" id="fDestino" placeholder="Ciudad de destino"></div>
+      </div>
+      <div class="form-group"><label>Descripción</label><textarea id="fDescripcion" placeholder="¿Qué contiene el envío?"></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline btn-sm" onclick="closeModal('envioModal')">Cancelar</button>
+      <button class="btn btn-primary btn-sm" onclick="saveEnvio()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Detalle / Eventos -->
+<div class="modal-overlay" id="detalleModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="detalleTitle">Detalle del envío</h3>
+      <button class="modal-close" onclick="closeModal('detalleModal')">×</button>
+    </div>
+    <div class="modal-body" id="detalleBody"></div>
+  </div>
+</div>
+
+<!-- MODAL: Añadir evento -->
+<div class="modal-overlay" id="eventoModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Añadir evento</h3>
+      <button class="modal-close" onclick="closeModal('eventoModal')">×</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="eventoEnvioId">
+      <div class="form-group"><label>Tipo de evento</label>
+        <select id="eventoTipo">
+          <option value="adelantado">Adelantar / Avanzar</option>
+          <option value="pausado">Pausar</option>
+          <option value="reanudado">Reanudar</option>
+          <option value="error">Marcar error</option>
+          <option value="entregado">Marcar entregado</option>
+          <option value="nota">Nota informativa</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Título</label><input type="text" id="eventoTitulo" placeholder="Ej: Llegó a centro de distribución"></div>
+      <div class="form-group"><label>Descripción</label><textarea id="eventoDescripcion" placeholder="Detalles del evento..."></textarea></div>
+      <div class="form-group"><label>Ubicación</label><input type="text" id="eventoUbicacion" placeholder="Ciudad o lugar"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline btn-sm" onclick="closeModal('eventoModal')">Cancelar</button>
+      <button class="btn btn-accent btn-sm" onclick="saveEvento()">Añadir evento</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================================
+// EnvíosSolidarios — Frontend JS (conectado a API D1)
+// ============================================================
+
+const API = '/api';
+let adminToken = sessionStorage.getItem('adminToken') || null;
+let rastreoMode = 'telefono';
+
+// ---------- Toast ----------
+function toast(msg, type = 'success') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast ' + type;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ---------- Tabs de rastreo ----------
+function switchTab(mode) {
+  rastreoMode = mode;
+  document.querySelectorAll('.rastreo-tab').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+  const input = document.getElementById('rastreoInput');
+  input.value = '';
+  input.placeholder = mode === 'telefono' ? 'Ej: +57 300 123 4567' : 'Ej: ES-AB3XK9';
+  document.getElementById('rastreoResult').innerHTML = '';
+}
+
+// ---------- Rastreo público ----------
+async function rastrear() {
+  const input = document.getElementById('rastreoInput').value.trim();
+  const resultDiv = document.getElementById('rastreoResult');
+  if (!input) { toast('Ingresa un teléfono o código', 'error'); return; }
+
+  resultDiv.innerHTML = '<p style="text-align:center;color:var(--gray);padding:2rem;">Buscando...</p>';
+
+  const param = rastreoMode === 'telefono' ? 'telefono' : 'codigo';
+  try {
+    const res = await fetch(`${API}/rastrear?${param}=${encodeURIComponent(input)}`);
+    const data = await res.json();
+    if (!res.ok) {
+      resultDiv.innerHTML = `<div class="envio-card" style="text-align:center;color:var(--gray);">${data.error || 'No encontrado'}</div>`;
+      return;
+    }
+    renderRastreo(data.envios);
+  } catch (e) {
+    resultDiv.innerHTML = '<div class="envio-card" style="text-align:center;color:#ef4444;">Error de conexión</div>';
+  }
+}
+
+function renderRastreo(envios) {
+  const resultDiv = document.getElementById('rastreoResult');
+  if (!envios || !envios.length) {
+    resultDiv.innerHTML = '<div class="envio-card" style="text-align:center;color:var(--gray);">No se encontraron envíos.</div>';
+    return;
+  }
+  resultDiv.innerHTML = envios.map(e => {
+    const estadoClass = `estado-${e.estado}`;
+    const estadoLabel = { pendiente: 'Pendiente', en_transito: 'En tránsito', pausado: 'Pausado', entregado: 'Entregado', error: 'Error' }[e.estado] || e.estado;
+    const timeline = (e.eventos || []).map(ev => `
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+          <h4>${ev.titulo}</h4>
+          ${ev.descripcion ? `<p>${ev.descripcion}</p>` : ''}
+          ${ev.ubicacion ? `<p>📍 ${ev.ubicacion}</p>` : ''}
+          <div class="timeline-fecha">${formatFecha(ev.fecha)}</div>
+        </div>
+      </div>`).join('');
+    return `
+      <div class="envio-card">
+        <div class="envio-card-header">
+          <div>
+            <div class="envio-codigo">${e.codigo}</div>
+            <div style="color:var(--gray);font-size:.85rem;margin-top:.2rem;">Creado: ${formatFecha(e.creado_en)}</div>
+          </div>
+          <span class="estado-badge ${estadoClass}">${estadoLabel}</span>
+        </div>
+        <div class="envio-info">
+          <div class="envio-info-item"><label>Beneficiario</label><span>${e.beneficiario || '—'}</span></div>
+          <div class="envio-info-item"><label>Origen</label><span>${e.origen || '—'}</span></div>
+          <div class="envio-info-item"><label>Destino</label><span>${e.destino || '—'}</span></div>
+          <div class="envio-info-item"><label>Descripción</label><span>${e.descripcion || '—'}</span></div>
+        </div>
+        ${timeline ? `<div class="timeline">${timeline}</div>` : '<p style="color:var(--gray);font-size:.85rem;">Sin eventos registrados.</p>'}
+      </div>`;
+  }).join('');
+}
+
+function formatFecha(f) {
+  if (!f) return '';
+  const d = new Date(f.includes('T') ? f : f.replace(' ', 'T') + 'Z');
+  return d.toLocaleString('es-ES', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+}
+
+// ---------- Admin ----------
+function showAdmin() {
+  if (adminToken) {
+    document.getElementById('adminLogin').classList.remove('active');
+    document.getElementById('adminPanel').classList.add('active');
+    loadAdminEnvios();
+    document.getElementById('adminPanel').scrollIntoView({ behavior: 'smooth' });
+  } else {
+    document.getElementById('adminPanel').classList.remove('active');
+    document.getElementById('adminLogin').classList.add('active');
+    document.getElementById('adminLogin').scrollIntoView({ behavior: 'smooth' });
+  }
+}
+
+async function adminLogin() {
+  const password = document.getElementById('adminPassword').value;
+  if (!password) return;
+  try {
+    const res = await fetch(`${API}/admin/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password })
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      document.getElementById('loginError').style.display = 'block';
+      return;
+    }
+    adminToken = data.token;
+    sessionStorage.setItem('adminToken', adminToken);
+    document.getElementById('loginError').style.display = 'none';
+    document.getElementById('adminPassword').value = '';
+    showAdmin();
+    toast('Sesión iniciada');
+  } catch (e) {
+    toast('Error de conexión', 'error');
+  }
+}
+
+function adminLogout() {
+  adminToken = null;
+  sessionStorage.removeItem('adminToken');
+  document.getElementById('adminPanel').classList.remove('active');
+  document.getElementById('adminLogin').classList.add('active');
+  toast('Sesión cerrada');
+}
+
+async function loadAdminEnvios() {
+  try {
+    const res = await fetch(`${API}/admin/envios`, { headers: { Authorization: `Bearer ${adminToken}` } });
+    if (res.status === 401) { adminLogout(); return; }
+    const data = await res.json();
+    renderAdminTable(data.envios || []);
+    updateMetrics(data.envios || []);
+  } catch (e) {
+    toast('Error al cargar envíos', 'error');
+  }
+}
+
+function updateMetrics(envios) {
+  document.getElementById('metricTotal').textContent = envios.length;
+  document.getElementById('metricTransito').textContent = envios.filter(e => e.estado === 'en_transito').length;
+  document.getElementById('metricEntregados').textContent = envios.filter(e => e.estado === 'entregado').length;
+}
+
+function renderAdminTable(envios) {
+  const tbody = document.getElementById('adminTableBody');
+  if (!envios.length) {
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--gray);padding:2rem;">No hay envíos registrados. Crea el primero con "Nuevo envío".</td></tr>';
+    return;
+  }
+  tbody.innerHTML = envios.map(e => {
+    const estadoClass = `estado-${e.estado}`;
+    const estadoLabel = { pendiente: 'Pendiente', en_transito: 'En tránsito', pausado: 'Pausado', entregado: 'Entregado', error: 'Error' }[e.estado] || e.estado;
+    return `<tr>
+      <td style="font-weight:700;font-family:'Space Grotesk',sans-serif;">${e.codigo}</td>
+      <td>${e.beneficiario || '—'}</td>
+      <td>${e.telefono || '—'}</td>
+      <td>${e.origen || '—'}</td>
+      <td>${e.destino || '—'}</td>
+      <td><span class="estado-badge ${estadoClass}">${estadoLabel}</span></td>
+      <td><div class="table-actions">
+        <button class="btn-event" onclick="openDetalle(${e.id})">Eventos</button>
+        <button class="btn-edit" onclick="openEditModal(${e.id})">Editar</button>
+        <button class="btn-del" onclick="deleteEnvio(${e.id})">Eliminar</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+
+// ---------- Modales ----------
+function openCreateModal() {
+  document.getElementById('modalTitle').textContent = 'Nuevo envío';
+  document.getElementById('envioId').value = '';
+  document.getElementById('fBeneficiario').value = '';
+  document.getElementById('fTelefono').value = '';
+  document.getElementById('fOrigen').value = '';
+  document.getElementById('fDestino').value = '';
+  document.getElementById('fDescripcion').value = '';
+  document.getElementById('fEstado').value = 'pendiente';
+  document.getElementById('envioModal').classList.add('active');
+}
+
+async function openEditModal(id) {
+  try {
+    const res = await fetch(`${API}/admin/envios/${id}`, { headers: { Authorization: `Bearer ${adminToken}` } });
+    const data = await res.json();
+    const e = data.envio;
+    document.getElementById('modalTitle').textContent = 'Editar envío ' + e.codigo;
+    document.getElementById('envioId').value = e.id;
+    document.getElementById('fBeneficiario').value = e.beneficiario || '';
+    document.getElementById('fTelefono').value = e.telefono || '';
+    document.getElementById('fOrigen').value = e.origen || '';
+    document.getElementById('fDestino').value = e.destino || '';
+    document.getElementById('fDescripcion').value = e.descripcion || '';
+    document.getElementById('fEstado').value = e.estado || 'pendiente';
+    document.getElementById('envioModal').classList.add('active');
+  } catch (e) { toast('Error al cargar envío', 'error'); }
+}
+
+async function saveEnvio() {
+  const id = document.getElementById('envioId').value;
+  const body = {
+    beneficiario: document.getElementById('fBeneficiario').value.trim(),
+    telefono: document.getElementById('fTelefono').value.trim(),
+    origen: document.getElementById('fOrigen').value.trim(),
+    destino: document.getElementById('fDestino').value.trim(),
+    descripcion: document.getElementById('fDescripcion').value.trim(),
+    estado: document.getElementById('fEstado').value,
+  };
+  if (!body.beneficiario || !body.telefono) { toast('Beneficiario y teléfono son obligatorios', 'error'); return; }
+
+  try {
+    const url = id ? `${API}/admin/envios/${id}` : `${API}/admin/envios`;
+    const method = id ? 'PUT' : 'POST';
+    const res = await fetch(url, {
+      method, headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${adminToken}` },
+      body: JSON.stringify(body)
+    });
+    if (!res.ok) { toast('Error al guardar', 'error'); return; }
+    closeModal('envioModal');
+    loadAdminEnvios();
+    toast(id ? 'Envío actualizado' : 'Envío creado');
+  } catch (e) { toast('Error de conexión', 'error'); }
+}
+
+async function deleteEnvio(id) {
+  if (!confirm('¿Eliminar este envío? Esta acción no se puede deshacer.')) return;
+  try {
+    await fetch(`${API}/admin/envios/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${adminToken}` } });
+    loadAdminEnvios();
+    toast('Envío eliminado');
+  } catch (e) { toast('Error al eliminar', 'error'); }
+}
+
+async function openDetalle(id) {
+  try {
+    const res = await fetch(`${API}/admin/envios/${id}`, { headers: { Authorization: `Bearer ${adminToken}` } });
+    const data = await res.json();
+    const e = data.envio;
+    document.getElementById('detalleTitle').textContent = 'Detalle — ' + e.codigo;
+    const estadoLabel = { pendiente: 'Pendiente', en_transito: 'En tránsito', pausado: 'Pausado', entregado: 'Entregado', error: 'Error' }[e.estado] || e.estado;
+    const timeline = (e.eventos || []).map(ev => `
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+          <h4>${ev.titulo}</h4>
+          ${ev.descripcion ? `<p>${ev.descripcion}</p>` : ''}
+          ${ev.ubicacion ? `<p>📍 ${ev.ubicacion}</p>` : ''}
+          <div class="timeline-fecha">${formatFecha(ev.fecha)}</div>
+        </div>
+      </div>`).join('');
+    document.getElementById('detalleBody').innerHTML = `
+      <div class="envio-info">
+        <div class="envio-info-item"><label>Beneficiario</label><span>${e.beneficiario}</span></div>
+        <div class="envio-info-item"><label>Teléfono</label><span>${e.telefono}</span></div>
+        <div class="envio-info-item"><label>Origen</label><span>${e.origen || '—'}</span></div>
+        <div class="envio-info-item"><label>Destino</label><span>${e.destino || '—'}</span></div>
+        <div class="envio-info-item"><label>Estado</label><span class="estado-badge estado-${e.estado}">${estadoLabel}</span></div>
+        <div class="envio-info-item"><label>Descripción</label><span>${e.descripcion || '—'}</span></div>
+      </div>
+      <h4 style="margin:1.5rem 0 .8rem;font-size:1.1rem;">Línea de tiempo</h4>
+      ${timeline ? `<div class="timeline">${timeline}</div>` : '<p style="color:var(--gray);">Sin eventos.</p>'}
+      <div class="event-buttons">
+        <button class="event-btn ev-adelantar" onclick="openEventoModal(${e.id},'adelantado')">⏩ Adelantar</button>
+        <button class="event-btn ev-pausar" onclick="openEventoModal(${e.id},'pausado')">⏸ Pausar</button>
+        <button class="event-btn ev-reanudar" onclick="openEventoModal(${e.id},'reanudado')">▶ Reanudar</button>
+        <button class="event-btn ev-error" onclick="openEventoModal(${e.id},'error')">⚠ Error</button>
+        <button class="event-btn ev-entregar" onclick="openEventoModal(${e.id},'entregado')">✓ Entregado</button>
+      </div>`;
+    document.getElementById('detalleModal').classList.add('active');
+  } catch (e) { toast('Error al cargar detalle', 'error'); }
+}
+
+function openEventoModal(envioId, tipo) {
+  document.getElementById('eventoEnvioId').value = envioId;
+  document.getElementById('eventoTipo').value = tipo || 'nota';
+  const titulos = { adelantado: 'Envío adelantado', pausado: 'Envío pausado', reanudado: 'Envío reanudado', error: 'Error reportado', entregado: 'Envío entregado', nota: 'Nota informativa' };
+  document.getElementById('eventoTitulo').value = titulos[tipo] || '';
+  document.getElementById('eventoDescripcion').value = '';
+  document.getElementById('eventoUbicacion').value = '';
+  closeModal('detalleModal');
+  document.getElementById('eventoModal').classList.add('active');
+}
+
+async function saveEvento() {
+  const envioId = document.getElementById('eventoEnvioId').value;
+  const body = {
+    tipo: document.getElementById('eventoTipo').value,
+    titulo: document.getElementById('eventoTitulo').value.trim(),
+    descripcion: document.getElementById('eventoDescripcion').value.trim(),
+    ubicacion: document.getElementById('eventoUbicacion').value.trim(),
+  };
+  if (!body.titulo) { toast('El título es obligatorio', 'error'); return; }
+  try {
+    const res = await fetch(`${API}/admin/envios/${envioId}/evento`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${adminToken}` },
+      body: JSON.stringify(body)
+    });
+    if (!res.ok) { toast('Error al añadir evento', 'error'); return; }
+    closeModal('eventoModal');
+    loadAdminEnvios();
+    toast('Evento añadido');
+  } catch (e) { toast('Error de conexión', 'error'); }
+}
+
+function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
+// ---------- Init ----------
+document.addEventListener('DOMContentLoaded', () => {
+  // Cerrar modales al hacer click fuera
+  document.querySelectorAll('.modal-overlay').forEach(o => {
+    o.addEventListener('click', e => { if (e.target === o) o.classList.remove('active'); });
+  });
+  // Cargar métricas iniciales
+  fetch(`${API}/admin/envios`).catch(() => {});
+});
+</script>
+</body>
+</html>
